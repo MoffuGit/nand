@@ -24,8 +24,8 @@ pub fn mux(a: bool, b: bool, sel: bool) -> bool {
     or(and(a, not(sel)), and(b, sel))
 }
 
-pub fn dmux(input: bool, sel: bool) -> (bool, bool) {
-    (and(input, not(sel)), and(input, sel))
+pub fn dmux(input: bool, sel: bool) -> [bool; 2] {
+    [and(input, not(sel)), and(input, sel)]
 }
 
 pub fn not_16(input: [bool; 16]) -> [bool; 16] {
@@ -83,14 +83,14 @@ pub fn mux_8_way_16(
 }
 
 pub fn dmux_4_way(input: bool, sel: [bool; 2]) -> [bool; 4] {
-    let (c0, c1) = dmux(input, sel[1]);
-    let (a, b) = dmux(c0, sel[0]);
-    let (c, d) = dmux(c1, sel[0]);
+    let [c0, c1] = dmux(input, sel[1]);
+    let [a, b] = dmux(c0, sel[0]);
+    let [c, d] = dmux(c1, sel[0]);
     [a, b, c, d]
 }
 
 pub fn dmux_8_way(input: bool, sel: [bool; 3]) -> [bool; 8] {
-    let (c0, c1) = dmux(input, sel[2]);
+    let [c0, c1] = dmux(input, sel[2]);
     let [a, b, c, d] = dmux_4_way(c0, [sel[0], sel[1]]);
     let [e, f, g, h] = dmux_4_way(c1, [sel[0], sel[1]]);
     [a, b, c, d, e, f, g, h]

@@ -222,24 +222,24 @@ fn test_mux() {
 fn test_dmux() {
     struct Test {
         input: (bool, bool),
-        expected: (bool, bool),
+        expected: [bool; 2],
     }
     let tests = vec![
         Test {
             input: (false, false),
-            expected: (false, false),
+            expected: [false, false],
         },
         Test {
             input: (false, true),
-            expected: (false, false),
+            expected: [false, false],
         },
         Test {
             input: (true, false),
-            expected: (true, false),
+            expected: [true, false],
         },
         Test {
             input: (true, true),
-            expected: (false, true),
+            expected: [false, true],
         },
     ];
 
@@ -289,7 +289,6 @@ fn test_not_16() {
             ],
         },
         Test {
-            //0001001000110100
             input: [
                 false, false, false, true, false, false, true, false, false, false, true, true,
                 false, true, false, false,
