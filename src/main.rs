@@ -1,4 +1,4 @@
-mod gate;
+mod computer;
 
 fn main() {
     println!("Hello, world!");

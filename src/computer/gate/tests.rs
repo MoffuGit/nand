@@ -1,4 +1,4 @@
-use crate::gate::{
+use super::{
     and, and_16, dmux, dmux_4_way, dmux_8_way, mux, mux_16, mux_4_way_16, mux_8_way_16, not,
     not_16, or, or_16, or_8_way, xor,
 };
