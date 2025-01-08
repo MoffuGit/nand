@@ -219,8 +219,8 @@ mod tests {
         struct State {
             a_register: u16,
             d_register: u16,
+            ram: (u16, u16, u16),
             pc: u16,
-            ram_0: u16,
         }
         let max_program: Vec<u16> = vec![
             0b0000000000000000,
@@ -241,80 +241,107 @@ mod tests {
             0b1110101010000111,
         ];
 
-        let expected_state = vec![];
+        let expected_state = vec![
+            State {
+                a_register: 0,
+                d_register: 0,
+                pc: 1,
+                ram: (3, 5, 0),
+            },
+            State {
+                a_register: 0,
+                d_register: 3,
+                pc: 2,
+                ram: (3, 5, 0),
+            },
+            State {
+                a_register: 1,
+                d_register: 3,
+                pc: 3,
+                ram: (3, 5, 0),
+            },
+            State {
+                a_register: 1,
+                d_register: 65534,
+                pc: 4,
+                ram: (3, 5, 0),
+            },
+            State {
+                a_register: 10,
+                d_register: 65534,
+                pc: 5,
+                ram: (3, 5, 0),
+            },
+            State {
+                a_register: 10,
+                d_register: 65534,
+                pc: 6,
+                ram: (3, 5, 0),
+            },
+            State {
+                a_register: 1,
+                d_register: 65534,
+                pc: 7,
+                ram: (3, 5, 0),
+            },
+            State {
+                a_register: 1,
+                d_register: 5,
+                pc: 8,
+                ram: (3, 5, 0),
+            },
+            State {
+                a_register: 12,
+                d_register: 5,
+                pc: 9,
+                ram: (3, 5, 0),
+            },
+            State {
+                a_register: 12,
+                d_register: 5,
+                pc: 12,
+                ram: (3, 5, 0),
+            },
+            State {
+                a_register: 2,
+                d_register: 5,
+                pc: 13,
+                ram: (3, 5, 0),
+            },
+            State {
+                a_register: 2,
+                d_register: 5,
+                pc: 14,
+                ram: (3, 5, 5),
+            },
+        ];
 
         let mut computer = Computer::new();
 
         computer.load_program(max_program)?;
 
+        computer.ram.load(3, 0)?;
+        computer.ram.load(5, 1)?;
+
         for State {
             a_register,
             d_register,
+            ram: (ram_0, ram_1, ram_2),
             pc,
-            ram_0,
         } in expected_state
         {
             computer.execute()?;
             assert_eq!(computer.cpu.a_register, a_register);
             assert_eq!(computer.cpu.d_register, d_register);
             assert_eq!(computer.prev_cpu_response.pc, pc);
+            assert_eq!(computer.ram.read(0)?, ram_0);
+            assert_eq!(computer.ram.read(1)?, ram_1);
+            assert_eq!(computer.ram.read(2)?, ram_2);
             assert_eq!(computer.ram.read(0b0)?, ram_0);
         }
 
         computer.reset();
 
-        let expected_state = vec![
-            State {
-                a_register: 2,
-                d_register: 5,
-                pc: 1,
-                ram_0: 0,
-            },
-            State {
-                a_register: 2,
-                d_register: 2,
-                pc: 2,
-                ram_0: 0,
-            },
-            State {
-                a_register: 3,
-                d_register: 2,
-                pc: 3,
-                ram_0: 0,
-            },
-            State {
-                a_register: 3,
-                d_register: 5,
-                pc: 4,
-                ram_0: 0,
-            },
-            State {
-                a_register: 0,
-                d_register: 5,
-                pc: 5,
-                ram_0: 0,
-            },
-            State {
-                a_register: 0,
-                d_register: 5,
-                pc: 6,
-                ram_0: 5,
-            },
-        ];
-
-        for State {
-            a_register,
-            d_register,
-            pc,
-            ram_0,
-        } in expected_state
-        {
-            computer.execute()?;
-            assert_eq!(computer.cpu.a_register, a_register);
-            assert_eq!(computer.cpu.d_register, d_register);
-            assert_eq!(computer.prev_cpu_response.pc, pc);
-            assert_eq!(computer.ram.read(0b0)?, ram_0);
-        }
         Ok(())
     }
 }

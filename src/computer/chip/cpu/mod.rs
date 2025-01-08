@@ -44,6 +44,7 @@ impl Cpu {
         match instruction {
             CpuInstructions::Ainstruction(register_a) => {
                 self.a_register = register_a;
+                res.address_m = register_a;
                 self.pc += 1;
             }
             CpuInstructions::CInstruction { comp, dest, jump } => {
@@ -87,7 +88,7 @@ mod tests {
                     CPUResponse {
                         out_m: 0,
                         write_m: false,
-                        address_m: 0,
+                        address_m: 12345,
                         pc: 1,
                     },
                     0,
@@ -111,7 +112,7 @@ mod tests {
                     CPUResponse {
                         out_m: 0,
                         write_m: false,
-                        address_m: 0,
+                        address_m: 23456,
                         pc: 3,
                     },
                     12345,
@@ -135,7 +136,7 @@ mod tests {
                     CPUResponse {
                         out_m: 0,
                         write_m: false,
-                        address_m: 0,
+                        address_m: 1000,
                         pc: 5,
                     },
                     11111,
@@ -159,7 +160,7 @@ mod tests {
                     CPUResponse {
                         out_m: 0,
                         write_m: false,
-                        address_m: 0,
+                        address_m: 1001,
                         pc: 7,
                     },
                     11111,
@@ -195,7 +196,7 @@ mod tests {
                     CPUResponse {
                         out_m: 0,
                         write_m: false,
-                        address_m: 0,
+                        address_m: 1000,
                         pc: 10,
                     },
                     11110,
@@ -219,7 +220,7 @@ mod tests {
                     CPUResponse {
                         out_m: 0,
                         write_m: false,
-                        address_m: 0,
+                        address_m: 14,
                         pc: 12,
                     },
                     65535,
@@ -243,7 +244,7 @@ mod tests {
                     CPUResponse {
                         out_m: 0,
                         write_m: false,
-                        address_m: 0,
+                        address_m: 999,
                         pc: 15,
                     },
                     65535,
@@ -280,7 +281,6 @@ mod tests {
             expected: (cpu_response, d_register),
         } in tests
         {
-            println!("{instructions:?}");
             let test_res = cpu.execute(instructions, input_m);
 
             assert_eq!(cpu_response, test_res);
