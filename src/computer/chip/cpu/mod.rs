@@ -1,15 +1,13 @@
 use self::instructions::CpuInstructions;
 
-use super::memory::Register;
-
 mod computation;
 pub mod instructions;
 
 type PC = u16;
 
 pub struct Cpu {
-    pub d_register: Register,
-    pub a_register: Register,
+    pub d_register: u16,
+    pub a_register: u16,
     pub pc: PC,
 }
 

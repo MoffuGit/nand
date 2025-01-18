@@ -1,21 +1,16 @@
-pub type Ram16K = [u16; 8192];
-pub type Ram8K = [u16; 4096];
-pub type Register = u16;
-pub type ROM32K = [u16; 16384];
-
 #[derive(Debug)]
 pub enum MemoryError {
-    OutOfBound,
+    OutOfBound(String),
 }
 
 pub struct Ram {
-    ram16k: Ram16K,
-    screen: Ram8K,
-    keyboard: Register,
+    ram16k: [u16; 16384],
+    screen: [u16; 8192],
+    keyboard: u16,
 }
 
 pub struct Rom {
-    rom: ROM32K,
+    rom: [u16; 16384],
 }
 
 impl Rom {
@@ -29,7 +24,7 @@ impl Rom {
             return Ok(self.rom[address]);
         }
 
-        Err(MemoryError::OutOfBound)
+        Err(MemoryError::OutOfBound("ROM Error".to_string()))
     }
 
     pub fn read(&self, address: u16) -> Result<u16, MemoryError> {
@@ -37,15 +32,15 @@ impl Rom {
             return Ok(self.rom[address as usize]);
         }
 
-        Err(MemoryError::OutOfBound)
+        Err(MemoryError::OutOfBound("ROM Error".to_string()))
     }
 }
 
 impl Ram {
     pub fn new() -> Self {
         Ram {
-            ram16k: [0; 8192],
-            screen: [0; 4096],
+            ram16k: [0; 16384],
+            screen: [0; 8192],
             keyboard: 0,
         }
     }
@@ -58,38 +53,38 @@ impl Ram {
 
     pub fn load(&mut self, input: u16, address: u16) -> Result<u16, MemoryError> {
         let address = address as usize;
-        if address <= 8192 {
+        if address < 16384 {
             self.ram16k[address] = input;
             return Ok(self.ram16k[address]);
         }
 
-        if address > 8192 && address <= 8192 + 4096 {
-            self.screen[address - 8192] = input;
-            return Ok(self.screen[address - 8192]);
+        if address >= 16384 && address < 8192 + 16384 {
+            self.screen[address - 16384] = input;
+            return Ok(self.screen[address - 16384]);
         }
 
-        if address == 8192 + 4096 + 1 {
+        if address == 8192 + 16384 {
             self.keyboard = input;
             return Ok(self.keyboard);
         }
 
-        Err(MemoryError::OutOfBound)
+        Err(MemoryError::OutOfBound("RAM Error on load".to_string()))
     }
 
     pub fn read(&self, address: u16) -> Result<u16, MemoryError> {
         let address = address as usize;
-        if address <= 8192 {
+        if address < 16384 {
             return Ok(self.ram16k[address]);
         }
 
-        if address > 8192 && address <= 8192 + 4096 {
-            return Ok(self.screen[address - 8192]);
+        if address >= 16384 && address < 8192 + 16384 {
+            return Ok(self.screen[address - 16384]);
         }
 
-        if address == 8192 + 4096 + 1 {
+        if address == 8192 + 16384 {
             return Ok(self.keyboard);
         }
 
-        Err(MemoryError::OutOfBound)
+        Err(MemoryError::OutOfBound("RAM Error on read".to_string()))
     }
 }
